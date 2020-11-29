@@ -2,7 +2,9 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 #include "Defs.h"
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 typedef struct hashTable_s *hashTable;
 
 hashTable createHashTable(CopyFunction copyKey, FreeFunction freeKey, PrintFunction printKey, CopyFunction copyValue, FreeFunction freeValue, PrintFunction printValue, EqualFunction equalKey, TransformIntoNumberFunction transformIntoNumber, int hashNumber);
@@ -13,3 +15,4 @@ status removeFromHashTable(hashTable, Element key);
 status displayHashElements(hashTable);
 
 #endif /* HASH_TABLE_H */
+

@@ -15,12 +15,12 @@ typedef status(*PrintFunction) (Element);
 typedef int(*TransformIntoNumberFunction) (Element);
 typedef bool(*EqualFunction) (Element, Element);
 // LinkedList defs
-typedef status(*AppedFunction) (Element);
+/*typedef status(*AppedFunction) (Element);
 typedef status(*DeleteFunction) (Element);
 typedef status(*GetDataFunction) (Element);
 typedef int(*GetLengthFunction) (Element);
 typedef Element(*SearchFunction) (Element,Element);
-typedef status(*DisplayFunction) (Element);
+typedef status(*DisplayFunction) (Element);*/
 
 
 

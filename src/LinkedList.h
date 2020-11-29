@@ -9,8 +9,8 @@ typedef struct Node_s *Node;
 typedef struct LinkedList_s *LinkedList;
 
 
-LinkedList createLinkedList (AppedFunction appendKey, DeleteFunction deleteKey, DisplayFunction displayKey, GetDataFunction getDataKey,
-																															SearchFunction searchKey);
+LinkedList createLinkedList (PrintFunction PrintFunction,EqualFunction EqualFunction);
+
 status destoryList(LinkedList inputList);
 status appendNode(LinkedList inputList, Element key);
 status deleteNode(LinkedList inputList, Element key);
