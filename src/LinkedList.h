@@ -1,18 +1,26 @@
-#ifndef DEFS_H_
-#define DEFS_H_
+#ifndef LINKEDLIST_H_
+#define LINKEDLIST_H_
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "Defs.h"
 
-typedef enum e_bool { false, true } bool;
-typedef enum e_status { success, failure } status;
+typedef struct Node_s *Node;
+typedef struct LinkedList_s *LinkedList;
 
-typedef void * Element;
 
-typedef Element(*CopyFunction) (Element);
-typedef status(*FreeFunction) (Element);
-typedef status(*PrintFunction) (Element);
-typedef int(*TransformIntoNumberFunction) (Element);
-typedef bool(*EqualFunction) (Element, Element);
+LinkedList createLinkedList (AppedFunction appendKey, DeleteFunction deleteKey, DisplayFunction displayKey, GetDataFunction getDataKey,
+																															SearchFunction searchKey);
+status destoryList(LinkedList inputList);
+status appendNode(LinkedList inputList, Element key);
+status deleteNode(LinkedList inputList, Element key);
+status displayList(LinkedList inputList);
+Element getDataByIndex(LinkedList inputList, int index);
+int getLengthList(LinkedList inputList);
+Element searchByKeyInList(LinkedList inputList, Element key);
 
-#endif /* DEFS_H_ */
+
+
+
+
+#endif /* LINKEDLIST_H_ */
