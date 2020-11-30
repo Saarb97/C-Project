@@ -11,6 +11,14 @@
 
 struct MultiValueHashTable_s{
 
+	PrintFunction printValue;
+	EqualFunction equalValue;
+	FreeFunction freeValue;
+	CopyFunction copyValue;
+	PrintFunction printKey;
+	CopyFunction copyKey;
+
+
 	hashTable hashTable;
 	int size;
 };
@@ -29,81 +37,96 @@ multiValueHashTable createMultiValueHashTable(CopyFunction copyKey, FreeFunction
 				equalKey== NULL ||transformIntoNumber== NULL){
 			return NULL;
 		}
+
 		mv_htb->hashTable =  createHashTable( copyKey,  freeKey,  printKey,
 									 copyValue,  freeValue,  printValue,
 									 equalKey,  transformIntoNumber,  hashNumber);//************alloc*************
+
 		mv_htb->size = hashNumber;
-		//todo:calloc is O(n) and this function should be O(1).find out WTF.
+		mv_htb->printValue = printValue;
+		mv_htb->printKey = printKey;
+		mv_htb->equalValue = equalKey;// not sure-weired
+		mv_htb->freeValue = freeValue;
+		mv_htb->copyValue = copyValue;
+		mv_htb->copyKey = copyKey;
 		return mv_htb;
 
 }
 
 status destroyMultiValueHashTable(multiValueHashTable mv_htb){
-	int i,j,k;
-	KeyValuePairPointer kvp;
-	LinkedList LLtail;
-	if (mv_htb == NULL){
+	if(mv_htb ==NULL){
 		return failure;
 	}
-	/*
-	 * for every linked list of hash table cell,got to the tail and delete all nodes in his value.
-	 * after that delete the tail himself and do that for every node in the cell linked list
-	 * and for every cell
-	*/
-	for (i=0;i<mv_htb->size;i++){
-		for (j=0;j<getLengthList(mv_htb->hashTable->table[i]);j++){
-			LLtail = mv_htb->hashTable->table[i]->tail;
-			destroyList(LLtail);
-		}
-		destroyList(mv_htb->hashTable->table[i]);
-	}
-	free(mv_htb->hashTable);
+	destroyHashTable(mv_htb->hashTable);
+	free(mv_htb);
+	return success;
 }
+
+
+
 status addToMultiValueHashTable(multiValueHashTable mv_htb , Element key , Element value){
-	KeyValuePairPointer KVP_Key;
+	KeyValuePairPointer KVP_sub = createKeyValuePair(mv_htb->copyKey(key),mv_htb->copyValue(value),mv_htb->printValue,mv_htb->printKey);
+
 	if (mv_htb == NULL || key == NULL || value == NULL){
 		return failure;
 	}
-	int intKey = transformIntoNumber(key);
-	int place = intKey % mv_htb->size;
-	if (mv_htb->hashTable->table[place] == 0){
-		//todo : change when linked list is complete;
-		mv_htb->hashTable[place] = createLinkedList(mv_htb->hashTable->printKey,mv_htb->hashTable->printValue);
-	}
 
-	LinkedList keyNode = searchByKeyInList(mv_htb->hashTable[place],key);//returns the Element,the the Element is another Linked List
-	KeyValuePairPointer KVP = createKeyValuePair(key,value,mv_htb->hashTable->printValue,mv_htb->hashTable->printKey );
+    LinkedList destNodeValue = lookupInHashTable(mv_htb->hashTable, key);
+    if (destNodeValue == NULL){//the key is not in the system
+    	if( addToHashTable(mv_htb->hashTable,getKey(KVP_sub),createLinkedList (mv_htb->printValue,mv_htb->equalValue,mv_htb->freeValue ,mv_htb->copyValue) )== failure){
+    		return failure;
+    	}
+    }
 
-	if (keyNode == NULL){
-		KVP_Key = createKeyValuePair(key,createLinkedList ( displayKey, searchKey),mv_htb->printValue,mv_htb->printKey );
-		appendNode(mv_htb->hashTable->table[place],KVP_Key);
-		appendNode(KVP_Key->value,KVP);
-
-	}
-	else{
-		//todo : change when linked list is complete;
-		appendNode(keyNode,KVP);
-	}
-
-	return success;
+	return appendNode(lookupInHashTable(mv_htb->hashTable, key), KVP_sub);//failure if node appending did not work
 
 
 }
-Element lookupInMultiValueHashTable(multiValueHashTable mv_htb,Element key){
+LinkedList lookupInMultiValueHashTable(multiValueHashTable mv_htb,Element key){
 	if (mv_htb == NULL || key == NULL ){
+			return NULL;
+	}
+	return lookupInHashTable(mv_htb->hashTable, key);
+
+
+}
+
+status removeFromMultiValueHashTable(multiValueHashTable mv_htb , Element key , Element value){
+	if (mv_htb == NULL || key == NULL || value == NULL){
 			return failure;
 		}
-		int intKey = transformIntoNumber(key);
-		int place = intKey % mv_htb->hashSize;
-		return
-
-}
-/*
-status removeFromMultiValueHashTable(multiValueHashTable mv_htb , Element key , Element value){
-
+	LinkedList destNodeValue = lookupInHashTable(mv_htb->hashTable, key);
+	 if (destNodeValue == NULL){
+		 return failure;
+	 }
+	 return deleteNode(destNodeValue,key);
 
 }
 
-*/
+status displayMultiValueHashElementsByKey(multiValueHashTable mv_htb,Element key){
+	if (mv_htb == NULL || key == NULL ){
+		return failure;
+	}
+	return displayList(lookupInMultiValueHashTable(mv_htb,key));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

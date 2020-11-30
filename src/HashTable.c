@@ -39,7 +39,10 @@ hashTable createHashTable(CopyFunction copyKey, FreeFunction freeKey, PrintFunct
 	htb->printValue = printValue;
 	htb->transformIntoNumber = transformIntoNumber;
 	htb->hashSize = hashNumber;
-	htb->table = (LinkedList *) malloc(hashNumber*sizeof(LinkedList));//LinkedList is a pointer to Linked List
+	htb->table = (LinkedList *) calloc(hashNumber,sizeof(LinkedList));//LinkedList is a pointer to Linked List
+	if (htb->table == NULL){
+			return NULL;
+		}
 
 	return htb;
 }
@@ -62,30 +65,34 @@ status addToHashTable(hashTable htb, Element key,Element value){
 	if (htb == NULL || key == NULL || value == NULL){
 		return failure;
 	}
-	int intKey = transformIntoNumber(key);
-	KeyValuePairPointer KVP = createKeyValuePair(key,value,htb->printValue,htb->printKey );
+	int intKey = htb->transformIntoNumber(key);
+	KeyValuePairPointer KVP = createKeyValuePair(htb->copyKey(key),htb->copyValue(value),htb->printValue,htb->printKey );
 	int place = intKey % htb->hashSize;
 	if (htb->table[place] == 0){
-		//todo : change when linked list is complete;
-		htb->table[place] = createLinkedList (htb->printValue,htb->equalKey);
+		htb->table[place] = createLinkedList (htb->printValue,htb->equalKey,htb->freeValue,htb->copyValue);
 	}
+
 	appendNode(htb->table[place], KVP);
 	return success;
 }
+
+
 Element lookupInHashTable(hashTable htb, Element key){
 	if (htb == NULL || key == NULL){
 		return NULL;
 	}
-	int intKey = transformIntoNumber(key);
+	int intKey = htb->transformIntoNumber(key);
 	int place = intKey % htb->hashSize;
 	return searchByKeyInList(htb->table[place],key);
 
 }
+
+
 status removeFromHashTable(hashTable htb, Element key){
 	if (htb == NULL || key == NULL){
 		return failure;
 	}
-	int intKey = transformIntoNumber(key);
+	int intKey = htb->transformIntoNumber(key);
 	int place = intKey % htb->hashSize;
 	if (searchByKeyInList(htb->table[place],key) == NULL){
 		return failure;

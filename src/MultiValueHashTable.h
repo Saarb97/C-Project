@@ -21,7 +21,8 @@ multiValueHashTable createMultiValueHashTable(CopyFunction copyKey, FreeFunction
 
 status destroyMultiValueHashTable(multiValueHashTable mv_htb);
 status addToMultiValueHashTable(multiValueHashTable mv_htb , Element key , Element Value);
-Element lookupInMultiValueHashTable(multiValueHashTable mv_htb,Element key);
-
+LinkedList lookupInMultiValueHashTable(multiValueHashTable mv_htb,Element key);
+status displayMultiValueHashElementsByKey(multiValueHashTable mv_htb,Element key);
+status removeFromMultiValueHashTable(multiValueHashTable mv_htb , Element key , Element value);
 
 #endif /* MULTIVALUEHASHTABLE_H_ */
